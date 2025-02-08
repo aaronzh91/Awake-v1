@@ -1,82 +1,155 @@
-// Mock data based on real Toronto reiki healers
-export const fetchReikiHealers = async () => {
-  // In a real implementation, this would use Google Places API
-  return [
-    {
-      id: "1",
-      title: "Reiki Healing Session",
-      providerName: "Reiki Room Toronto",
-      providerImage:
-        "https://api.dicebear.com/7.x/avataaars/svg?seed=reikiroom",
-      serviceType: "Energy Healing",
-      rating: 4.9,
-      price: 90,
-      location: "Downtown Toronto",
-      distance: "1.2",
-      coordinates: { lat: 43.6547, lng: -79.3907 },
-      certificationTier: "gold",
-      startTime: "2:00 PM",
-      duration: 60,
-    },
-    {
-      id: "2",
-      title: "Traditional Reiki Treatment",
-      providerName: "Urban Healing Centre",
-      providerImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=urban",
-      serviceType: "Energy Healing",
-      rating: 4.7,
-      price: 85,
-      location: "Yorkville",
-      distance: "2.3",
-      coordinates: { lat: 43.6709, lng: -79.3957 },
-      certificationTier: "silver",
-      startTime: "3:30 PM",
-      duration: 75,
-    },
-    {
-      id: "3",
-      title: "Reiki & Sound Healing",
-      providerName: "Healing Hands Toronto",
-      providerImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=hands",
-      serviceType: "Energy Healing",
-      rating: 4.8,
-      price: 120,
-      location: "The Annex",
-      distance: "3.1",
-      coordinates: { lat: 43.6626, lng: -79.4 },
-      certificationTier: "gold",
-      startTime: "1:00 PM",
-      duration: 90,
-    },
-    {
-      id: "4",
-      title: "Distance Reiki Session",
-      providerName: "Zen Wellness",
-      providerImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=zen",
-      serviceType: "Energy Healing",
-      rating: 4.5,
-      price: 75,
-      location: "Online",
-      distance: "0",
-      coordinates: { lat: 43.6532, lng: -79.3832 },
-      certificationTier: "blue",
-      startTime: "11:00 AM",
-      duration: 45,
-    },
-    {
-      id: "5",
-      title: "Chakra Balancing & Reiki",
-      providerName: "Spirit Temple",
-      providerImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=spirit",
-      serviceType: "Energy Healing",
-      rating: 4.2,
-      price: 95,
-      location: "Little Italy",
-      distance: "4.2",
-      coordinates: { lat: 43.6552, lng: -79.4147 },
-      certificationTier: "unverified",
-      startTime: "4:00 PM",
-      duration: 60,
-    },
+import {
+  torontoNeighborhoods,
+  generateTimeSlots,
+  generateProviderName,
+  generateBusinessName,
+} from "./mockData";
+
+interface TimeSlot {
+  time: string;
+  duration: number;
+}
+
+interface Provider {
+  id: string;
+  businessName: string;
+  providerName: string;
+  providerImage: string;
+  rating: number;
+  basePrice: number;
+  location: string;
+  coordinates: { lat: number; lng: number };
+  certificationTier: "gold" | "silver" | "blue" | "unverified";
+  timeSlots: TimeSlot[];
+}
+
+const generateProviders = (count: number): Provider[] => {
+  const tiers: Array<"gold" | "silver" | "blue" | "unverified"> = [
+    "gold",
+    "silver",
+    "blue",
+    "unverified",
   ];
+  const providers: Provider[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const neighborhood =
+      torontoNeighborhoods[
+        Math.floor(Math.random() * torontoNeighborhoods.length)
+      ];
+    const tier = tiers[Math.floor(Math.random() * tiers.length)];
+    const basePrice = Math.floor(Math.random() * (150 - 70) + 70); // $70-150
+    const rating = (Math.random() * (5 - 4) + 4).toFixed(1); // 4.0-5.0
+
+    providers.push({
+      id: `provider-${i + 1}`,
+      businessName: generateBusinessName(),
+      providerName: generateProviderName(),
+      providerImage: `https://api.dicebear.com/7.x/avataaars/svg?seed=provider${i}`,
+      rating: Math.round(parseFloat(rating) * 10) / 10,
+      basePrice,
+      location: neighborhood.name,
+      coordinates: neighborhood.coordinates,
+      certificationTier: tier,
+      timeSlots: generateTimeSlots(),
+    });
+  }
+
+  return providers;
+};
+
+const serviceTypes = [
+  {
+    type: "Energy Healing",
+    titles: [
+      "Reiki Healing Session",
+      "Chakra Balancing",
+      "Energy Cleansing",
+      "Pranic Healing",
+      "Quantum Touch Session",
+    ],
+  },
+  {
+    type: "Spiritual Coaching",
+    titles: [
+      "Life Path Guidance",
+      "Spiritual Mentoring",
+      "Soul Purpose Session",
+      "Mindfulness Coaching",
+      "Spiritual Development",
+    ],
+  },
+  {
+    type: "Meditation",
+    titles: [
+      "Guided Meditation",
+      "Sound Bath Session",
+      "Breathwork Journey",
+      "Mindfulness Training",
+      "Group Meditation",
+    ],
+  },
+  {
+    type: "Tarot Reading",
+    titles: [
+      "Tarot Card Reading",
+      "Oracle Card Session",
+      "Psychic Reading",
+      "Intuitive Guidance",
+      "Destiny Reading",
+    ],
+  },
+  {
+    type: "Crystal Healing",
+    titles: [
+      "Crystal Therapy",
+      "Gemstone Healing",
+      "Crystal Grid Session",
+      "Stone Medicine",
+      "Crystal Attunement",
+    ],
+  },
+  {
+    type: "Sound Therapy",
+    titles: [
+      "Sound Healing",
+      "Singing Bowl Session",
+      "Vibrational Therapy",
+      "Gong Bath",
+      "Voice Healing",
+    ],
+  },
+];
+
+export const fetchReikiHealers = async () => {
+  const providers = generateProviders(50);
+  const services = [];
+
+  // Create service entries for each provider's time slots
+  for (const provider of providers) {
+    for (const slot of provider.timeSlots) {
+      const serviceTypeIndex = Math.floor(Math.random() * serviceTypes.length);
+      const titleIndex = Math.floor(Math.random() * 5);
+      services.push({
+        id: `${provider.id}-${slot.time.replace(":", "")}`,
+        title: serviceTypes[serviceTypeIndex].titles[titleIndex],
+        serviceType: serviceTypes[serviceTypeIndex].type,
+        providerName: provider.providerName,
+        businessName: provider.businessName,
+        providerImage: provider.providerImage,
+
+        rating: provider.rating,
+        price: provider.basePrice,
+        location: provider.location,
+        distance: (Math.random() * 5 + 0.5).toFixed(1),
+        coordinates: provider.coordinates,
+        certificationTier: provider.certificationTier,
+        startTime: slot.time,
+        duration: slot.duration,
+      });
+    }
+  }
+
+  // Sort by time
+  return services.sort((a, b) => a.startTime.localeCompare(b.startTime));
 };

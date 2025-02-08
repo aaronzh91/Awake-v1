@@ -12,9 +12,16 @@ import {
 } from "@/components/ui/navigation-menu";
 
 interface HeaderProps {
+  onTabChange?: (tab: string) => void;
+  onFilterChange?: (filters: { serviceType?: string }) => void;
   onSearch?: (query: string) => void;
   cartItemCount?: number;
   notificationCount?: number;
+  filters?: {
+    serviceType: string;
+    date: Date;
+    time: string;
+  };
   categories?: { title: string; items: { title: string; href: string }[] }[];
 }
 
@@ -24,27 +31,63 @@ const Header = ({
   notificationCount = 0,
   categories = [
     {
+      title: "Home",
+      items: [
+        { title: "Featured Providers", href: "/?section=featured" },
+        { title: "New Arrivals", href: "/?section=new" },
+        { title: "Special Offers", href: "/?section=offers" },
+        { title: "Popular Services", href: "/?section=popular" },
+      ],
+    },
+    {
       title: "Services",
       items: [
-        { title: "Energy Healing", href: "#" },
-        { title: "Spiritual Coaching", href: "#" },
-        { title: "Meditation Classes", href: "#" },
+        { title: "Energy Healing", href: "/?type=energy-healing" },
+        { title: "Spiritual Coaching", href: "/?type=spiritual-coaching" },
+        { title: "Meditation", href: "/?type=meditation" },
+        { title: "Tarot Reading", href: "/?type=tarot-reading" },
+        { title: "Crystal Healing", href: "/?type=crystal-healing" },
+        { title: "Sound Therapy", href: "/?type=sound-therapy" },
       ],
     },
     {
       title: "Products",
       items: [
-        { title: "Crystals", href: "#" },
-        { title: "Meditation Tools", href: "#" },
-        { title: "Wellness Items", href: "#" },
+        {
+          title: "Crystals & Gemstones",
+          href: "/?tab=products&category=crystals",
+        },
+        {
+          title: "Meditation Tools",
+          href: "/?tab=products&category=meditation",
+        },
+        {
+          title: "Tarot & Oracle Cards",
+          href: "/?tab=products&category=tarot",
+        },
+        { title: "Sound Healing Tools", href: "/?tab=products&category=sound" },
+        { title: "Sacred Objects", href: "/?tab=products&category=sacred" },
+        { title: "Wellness Items", href: "/?tab=products&category=wellness" },
+      ],
+    },
+    {
+      title: "Community",
+      items: [
+        { title: "Events & Workshops", href: "/community/events" },
+        { title: "Discussion Forum", href: "/community/forum" },
+        { title: "Success Stories", href: "/community/stories" },
+        { title: "Practitioner Network", href: "/community/network" },
+        { title: "Resources", href: "/community/resources" },
       ],
     },
   ],
 }: HeaderProps) => {
   return (
-    <header className="w-full h-20 bg-white border-b border-gray-200 px-4 lg:px-6 flex items-center justify-between fixed top-0 z-50">
+    <header className="w-full h-20 bg-white/80 backdrop-blur-sm border-b border-purple-100 px-4 lg:px-6 flex items-center justify-between fixed top-0 z-50">
       <div className="flex items-center gap-8">
-        <h1 className="text-2xl font-bold">Marketplace</h1>
+        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
+          Awake
+        </h1>
 
         <NavigationMenu>
           <NavigationMenuList>
@@ -58,6 +101,23 @@ const Header = ({
                         <NavigationMenuLink asChild>
                           <a
                             href={item.href}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              const url = new URL(
+                                item.href,
+                                window.location.origin,
+                              );
+                              const type = url.searchParams.get("type");
+                              const tab = url.searchParams.get("tab");
+                              const category = url.searchParams.get("category");
+
+                              if (type) {
+                                onFilterChange?.({ serviceType: type });
+                              }
+                              if (tab) {
+                                onTabChange?.(tab);
+                              }
+                            }}
                             className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                           >
                             {item.title}

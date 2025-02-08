@@ -47,7 +47,7 @@ const FilterSidebar = ({ onFilterChange = () => {} }: FilterSidebarProps) => {
   ];
 
   return (
-    <aside className="w-full md:w-[280px] shrink-0 bg-white p-4 rounded-lg border">
+    <aside className="w-full md:w-[280px] shrink-0 bg-white/80 backdrop-blur-sm p-4 rounded-lg border border-purple-100 shadow-sm">
       <Accordion
         type="single"
         collapsible

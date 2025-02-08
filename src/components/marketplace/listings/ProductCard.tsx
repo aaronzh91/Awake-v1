@@ -29,7 +29,7 @@ const ProductCard = ({
   onAddToCart = () => console.log("Add to cart clicked"),
 }: ProductCardProps) => {
   return (
-    <Card className="w-[280px] h-[380px] bg-white overflow-hidden flex flex-col">
+    <Card className="w-[280px] h-[380px] bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all hover:bg-white/90 overflow-hidden flex flex-col border-purple-100">
       <CardHeader className="p-0">
         <div className="relative h-40 w-full">
           <img src={image} alt={title} className="w-full h-full object-cover" />
